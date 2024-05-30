@@ -49,6 +49,13 @@ const styles = StyleSheet.create({
     assinatura:{
         marginTop:150,
         fontWeight:"bold"
+    },
+    errorMessage:{
+        fontSize:12,
+        color:"red",
+        fontWeight:"bold",
+        paddingLeft:20,
+        paddingTop:5,
     }
 })
 
