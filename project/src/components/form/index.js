@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import { TextInput, View,Text, TouchableOpacity, Keyboard,TouchableWithoutFeedback, Vibration  } from "react-native";
+import { TextInput, View,Text, TouchableOpacity, Vibration, Pressable, Keyboard, FlatList } from "react-native";
 import ResultImc from "./ResultImc";
 import styles from "./style"; 
 
 
-export default function Form(){
+export default function Form(props){
 
 const [height, setHeight] = useState(null)
 const [weight, setWeight] = useState(null)
@@ -12,24 +12,22 @@ const [messageImc, setMessageImc] = useState("Preencha o peso e altura")
 const [imc, setImc]= useState(null)
 const [TextButton, setTextButton] = useState("Calcular")
 const [errorMessage, setErrorMessage] = useState(null)
-
+const [imcList, setImcList] = useState([])
 
 function imcCalculator(){
-    return setImc(  //faz a conta o imc (adaptado para aceitar ponto e virgula pois no IOS aparece somenet virgula)
-        (
-          (weight.replace(",", ".") * 1) /
-          (height.replace(",", ".") * 1 * (height.replace(",", ".") * 1))
-        ).toFixed(2)
-      );
-     
+    let heightFormat = height.replace(",",".") // muda a virgula pra ponto
+    let totalImc = ((weight / (heightFormat*heightFormat)).toFixed(2));
+    setImcList((arr) => [...arr, {id: new Date().getTime(), imc:totalImc}]) 
+    setImc(totalImc)
 }
-function verificationImc(){
+function verificationImc(){ //verifica se esta tudo preenchido se nao tiver ele vibra
     if(imc ==null){
         Vibration.vibrate();
         setErrorMessage("Campo Obrigatorio*")
     }
 }
-function validationImc(){  
+function validationImc(){ 
+    console.log(imcList) 
     if(weight != null && height != null){ //Valida se os dois dados foram preenchidos
         imcCalculator()
         setHeight(null)
@@ -38,22 +36,23 @@ function validationImc(){
         setTextButton("Calcular Novamente")
         setErrorMessage(null)
         return
-    } //tudo isso abaixo esta funcinando como condição de um else
-    verificationImc()
-    setImc(null)
-    setTextButton("Calcular")
-    setMessageImc("Preencha o peso e altura")
+    } else{
+        verificationImc()
+        setImc(null)
+        setTextButton("Calcular")
+        setMessageImc("Preencha o peso e altura")
+    }
+    
 }
     return(
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-    
-        <View style={styles.formContext}>
-            <View  style={styles.form}>
+            <View  style={styles.formContext}>
+                {imc == null ?  //if
+                <Pressable onPress={Keyboard.dismiss} style={styles.form}> 
 
-                <Text style={styles.formLabel}>Altura</Text>
+                <Text style={styles.formLabel}>Altura</Text>   
                 <Text style={styles.errorMessage}>{errorMessage} </Text>
-                <TextInput  style={styles.input}  //Input para escrever
+                <TextInput  style={styles.input}  //Input para escrever   (o pressable fecha o teclado ao clicar fora do input)
                 onChangeText={setHeight} //manda o dado daqui pro setHeith
                 value={height}
                 placeholder="Ex. 1.75"
@@ -68,8 +67,6 @@ function validationImc(){
                 placeholder="Ex. 75.365"
                 keyboardType="numeric"
                 ></TextInput>
-
-
  
                 <TouchableOpacity
                 style={styles.buttonCalculator}   // TIPO DE BOTÃO
@@ -79,17 +76,43 @@ function validationImc(){
                 }}> 
                 <Text style={styles.textbuttonCalculator}>{TextButton} </Text>
                 </TouchableOpacity>
+                </Pressable>
+
+                : //else 
                 
-            </View>    
-            <ResultImc messageResultImc={messageImc} ResultImc={imc} />
-          
+                <View style={styles.exibitionResultImc}>
+            
+                    <ResultImc messageResultImc={messageImc} ResultImc={imc} />
+                    <TouchableOpacity
+                        style={styles.buttonCalculator}   // TIPO DE BOTÃO
+                        onPress={() => {validationImc()}}> 
+
+                        <Text style={styles.textbuttonCalculator}>{TextButton} </Text>
+                        </TouchableOpacity>
+                    </View>
+            //fim do else
+            } 
         
+            <FlatList 
+               // showsVerticalScrollIndicator={false} tira a barrinha de scrooll
+                style={styles.listImcs}
+                data={imcList.reverse()}
+                renderItem={({item}) =>{
+                return(
+                        <Text style={styles.ResultImcItem}>
+                            <Text style={styles.textResultitemList}> Resultado IMC = </Text>
+                            {item.imc}
+                        </Text>
+                    )
+                }}
+                keyExtractor={(item) => {
+                    item.id
+                }}
+                />
         
         <Text style={styles.assinatura} >Desenvolvido por Bruno Souza</Text>
 
+        </View>    
 
-       
-        </View>
-        </TouchableWithoutFeedback>
     );
 }

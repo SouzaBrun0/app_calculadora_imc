@@ -2,21 +2,18 @@ import { Button, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
     formContext: {
-        width:"100%",
-        height:"100%",
+        flex:1,
         bottom:0,
         alignItems:"center",
-        marginTop:30,
         borderTopLeftRadius:30,
         borderTopRightRadius:30,
         backgroundColor:"#ffffff",
-        marginTop:30,
+        paddingTop:30,
     },
     form: {
         width:"100%",
-        height:"auto",
-        marginTop:30,
-        padding:10,
+        paddingTop:20,
+     
     },
     formLabel:{
         color:"#000000",
@@ -47,7 +44,7 @@ const styles = StyleSheet.create({
         margin:30,
     },
     assinatura:{
-        marginTop:150,
+        paddingBottom:50,
         fontWeight:"bold"
     },
     errorMessage:{
@@ -56,7 +53,26 @@ const styles = StyleSheet.create({
         fontWeight:"bold",
         paddingLeft:20,
         paddingTop:5,
-    }
+    },
+    exibitionResultImc:{
+        width:"100%",
+        height:"50%",
+    },
+    listImcs:{
+        marginTop:20,
+    },
+    ResultImcItem:{
+        fontSize:20,
+        color:"red",
+        height:50,
+        width:"100%",
+        paddingRight:20,
+    },
+    textResultitemList:{
+        fontSize:16,
+        color:"red",
+
+    },
 })
 
 export default styles
